@@ -134,6 +134,9 @@ int main(int argc, char **argv)
         
         
     } 
+    // precisa? deve ajudar pra caso o programa esteja usando mt memoria que nao use 
+    // desnecessariamente alocando pontos nao utilizados.
+    arrPonto = realloc(arrPonto, sizeof(Ponto*) * qtdPontos);
     fclose(fileProg);
 
     double **Matrix = matrixDistancia(arrPonto, qtdPontos);
