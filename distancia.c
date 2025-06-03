@@ -2,7 +2,6 @@
 
 
 
-
 double distanciaEuclidiana(Ponto* pon1, Ponto* pon2)
 {
     int dimensoes = retornaQtdDimensao(pon1);
@@ -12,8 +11,7 @@ double distanciaEuclidiana(Ponto* pon1, Ponto* pon2)
     {
         sum+= pow(retornaValorPos(pon1, i)-retornaValorPos(pon2,i),2);
     }
-    double result = sqrt(sum);
-    return result;
+    return sqrt(sum);
     // depois, faz a raiz disso. pra pegar a distancia. (result)
 }
 
@@ -21,17 +19,20 @@ double distanciaEuclidiana(Ponto* pon1, Ponto* pon2)
 // por enquanto aloca ela toda, ineficiente.
 double **matrixDistancia(Ponto ** pontos, int qtdPontos)
 {
+
+    int tamArrAux = (((qtdPontos*qtdPontos)-qtdPontos)/2);
+
     double **newMatrix = malloc(sizeof(double*) * qtdPontos);
     for(int i=0;i<qtdPontos;i++)
     {
         // estou alocando "desnecessarias" porem vou ver se consigo mudar.
-        newMatrix[i] = malloc(sizeof(double) * qtdPontos);
+        newMatrix[i] = malloc(sizeof(double) * (i));
         for(int j=0;j<qtdPontos;j++)
         {
-            // nao calcula desnecessarias, ou seja, distancias repetidas ou distancia entre o proprio ponto.
+            // naoz calcula desnecessarias, ou seja, distancias repetidas ou distancia entre o proprio ponto.
             if(j>=i)
             {
-                newMatrix[i][j] = -1;
+                break;
             }
             else
             {

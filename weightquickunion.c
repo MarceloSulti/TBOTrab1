@@ -1,6 +1,6 @@
 #include "weightquickunion.h"
 
-
+// precisa de uma struct so pra isso? n da pra usar o metodo normal?
 struct UFSet
 {
     int *id;
@@ -21,7 +21,7 @@ void UF_libera(UFSet *uf)
     if(uf)
     {
         free(uf->id);
-        free(uf)
+        free(uf);
         uf = NULL;
     }
 }

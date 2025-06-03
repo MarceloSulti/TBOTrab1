@@ -47,6 +47,15 @@ DECIDIR:
 3- Como armazenar a arvore. 
 4- Como armazenar os grupos/componente conexa.
 
+!!! Ver se eu consigo em vez de dar realloc pra cada novo valor do ponto, eu consigo depois do Nome ler quantos
+    valores um ponto tem e dar malloc nesse tamanho. (ver se eh mais eficiente)
+
+!!! Realloc pode ser 1.2 ou 1.5 a mais ou algo do tipo, e depois dar um ultimo realloc com o tamanho.abort
+
+!! Converter para array a matriz, extremamente mais eficiente, ja que teria que ficar transformando em array 
+   de qualquer jeito.
+
+!!! ORDENAR OS VERTICES JUNTO! Guardar a posição deles em vez de ficar iterando 3000x com ordem N
 
 FIZ:
 
@@ -90,6 +99,7 @@ int main(int argc, char **argv)
     // por enquanto aonde armazeno todos pontos.
     Ponto ** arrPonto = NULL;
     int qtdPontos = 0;
+    int qtdMalloc = 0;
     //lendo os pontos do arquivo.
     while(!feof(fileProg)) // << enquanto nao acabar o arquivo
     {
@@ -103,7 +113,13 @@ int main(int argc, char **argv)
         {
             char* token = strtok(buffer, ",");
             qtdPontos++;
-            arrPonto = realloc(arrPonto, sizeof(Ponto*) * qtdPontos);
+            //realloc tamanho a mais pra ser eficiente. / comparar eficiencia disso e do N
+            if(qtdPontos >= qtdMalloc)
+            {
+                qtdMalloc = qtdPontos * 1.5;
+                arrPonto = realloc(arrPonto, sizeof(Ponto*) * qtdMalloc);
+            }
+            
             Ponto * ponew = criaPontoNome(token);
             arrPonto[qtdPontos-1] = ponew;
             token = strtok(NULL, ",");
