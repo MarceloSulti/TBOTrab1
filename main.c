@@ -47,6 +47,9 @@ DECIDIR:
 3- Como armazenar a arvore. 
 4- Como armazenar os grupos/componente conexa.
 
+!!! Prof disse que pode tanto usar uma funcao dentro do Kruskal pra imprimir as saidas quanto pegar e imprimir as saidas
+    na main. 
+
 !!! Ver se eu consigo em vez de dar realloc pra cada novo valor do ponto, eu consigo depois do Nome ler quantos
     valores um ponto tem e dar malloc nesse tamanho. (ver se eh mais eficiente)
 
@@ -66,11 +69,22 @@ FIZ:
 
 FAZER: 
     4- Union Find logica completa com base no codigo (pegar o eficiente QUE TA NO SLIDE!)
-    4.5? - Ordenar matriz de distancias (para pegar pesos pro kruskal) < tem q ser matriz?
+    4.5? - Ordenar matriz de distancias (para pegar pesos pro kruskal) < tem q ser matriz? < nao! usar array pq eh melhor
     5- Arvore geradora minima (Kruskal?)
     6- Remover  arestas k-1 pra deixar componentes (ver como remover do union find) << nao eh so nao juntar elas? fazer em vez de n-1 n-(k-1)/n-k?
 
-
+    FAZER update:
+    - Converter matrizes pra arrays (conveniente), incluindo todas funcoes. (funcao Ordenar deixa de existir? ja q eh um wrapper
+    pra qsort)
+    --
+    - Implementar um dos Union-Finds nos slides (nao precisa de struct,,,)
+    - Implementar o Kruskal mesmo (MST)
+    - Na hora do union find, pegar arestas levando em consideracao k (nao adiciona as k ultimas etc etc)
+    - cuidar da saida
+    - ver se modularizo mais?
+    --
+    - make
+    - analise
 
  -1 - saida (para um arquivo que eh o 3 argumento do codigo)
     - modularizar isso mais ainda. kruskal pode ser um so?
@@ -131,7 +145,6 @@ int main(int argc, char **argv)
             
         }
         free(buffer);
-        
         
     } 
     // precisa? deve ajudar pra caso o programa esteja usando mt memoria que nao use 
