@@ -47,6 +47,8 @@ DECIDIR:
 3- Como armazenar a arvore. 
 4- Como armazenar os grupos/componente conexa.
 
+!!! Na main, pegar a quantia de pontos apos nome (pela string) e usar isso pra malloc a quantia exata de dimensoes pros pontos. 
+
 !!! Prof disse que pode tanto usar uma funcao dentro do Kruskal pra imprimir as saidas quanto pegar e imprimir as saidas
     na main. 
 
@@ -151,31 +153,121 @@ int main(int argc, char **argv)
     // desnecessariamente alocando pontos nao utilizados.
     arrPonto = realloc(arrPonto, sizeof(Ponto*) * qtdPontos);
     fclose(fileProg);
-
-    double **Matrix = matrixDistancia(arrPonto, qtdPontos);
+    double * arrDis= arrayDistancia(arrPonto,qtdPontos);
     int posId[qtdPontos];
     for(int i=0;i<qtdPontos;i++)
     {
         posId[i] = i;
     }
 
-    //imprimeMatrixDistancia(Matrix, qtdPontos);
-
-    //ordenaMatriz(Matrix, qtdPontos);
-
-    //meusortmatrix(Matrix, qtdPontos);
     
+
+    printf("\n");
+    
+    //imprimeArrayDistancia(arrDis, qtdPontos);
     printf("\n\n");
-    matrizToArr( Matrix, qtdPontos);
 
-    //imprimeMatrixDistancia(Matrix, qtdPontos);
+    // qtd de arestas.
+    int tamArrAux = (((qtdPontos*qtdPontos)-qtdPontos)/2);
+
+    Aresta **arrAresta = malloc(sizeof(Aresta*) * tamArrAux);
+    int auxArrAresta = 0;
+    for(int i=0;i<qtdPontos;i++)
+    {
+        // estou alocando "desnecessarias" porem vou ver se consigo mudar.
+        // enquanto j<= i?
+        for(int j=0;j<qtdPontos;j++)
+        {
+            // naoz calcula desnecessarias, ou seja, distancias repetidas ou distancia entre o proprio ponto.
+            if(j>=i)
+            {
+                break;
+            }
+            else
+            {
+                arrAresta[auxArrAresta] = montaArestaSVal(arrPonto[i],arrPonto[j]);
+                auxArrAresta++;
+            }
+        }
+    }
+
+    qsort(arrDis,tamArrAux,sizeof(double),comp);
+
+    printf("\n");
+    //imprimeArrayDistancia(arrDis, qtdPontos);
+
+    printf("\n");
 
 
-    liberaMatriz(Matrix,qtdPontos);
+    auxArrAresta = 0;
+    for(int i=0;i<qtdPontos;i++)
+    {
+        // estou alocando "desnecessarias" porem vou ver se consigo mudar.
+        // enquanto j<= i?
+        for(int j=0;j<qtdPontos;j++)
+        {
+            // naoz calcula desnecessarias, ou seja, distancias repetidas ou distancia entre o proprio ponto.
+            if(j>=i)
+            {
+                break;
+            }
+            else
+            {
+                imprimeAresta(arrAresta[auxArrAresta]);
+                auxArrAresta++;
+            }
+        }
+    }
+
+    ordenaAresta(arrAresta, tamArrAux);
+
+    printf("\nTeste ordenando Arestas\n");
+    auxArrAresta = 0;
+    for(int i=0;i<qtdPontos;i++)
+    {
+        // estou alocando "desnecessarias" porem vou ver se consigo mudar.
+        // enquanto j<= i?
+        for(int j=0;j<qtdPontos;j++)
+        {
+            // naoz calcula desnecessarias, ou seja, distancias repetidas ou distancia entre o proprio ponto.
+            if(j>=i)
+            {
+                break;
+            }
+            else
+            {
+                imprimeAresta(arrAresta[auxArrAresta]);
+                auxArrAresta++;
+            }
+        }
+    }
+
+    
+
+    auxArrAresta = 0;
+    for(int i=0;i<qtdPontos;i++)
+    {
+        // estou alocando "desnecessarias" porem vou ver se consigo mudar.
+        // enquanto j<= i?
+        for(int j=0;j<qtdPontos;j++)
+        {
+            // naoz calcula desnecessarias, ou seja, distancias repetidas ou distancia entre o proprio ponto.
+            if(j>=i)
+            {
+                break;
+            }
+            else
+            {
+                liberaAresta(arrAresta[auxArrAresta]);
+                auxArrAresta++;
+            }
+        }
+    }
+    free(arrAresta);
 
     liberaPontos(arrPonto,qtdPontos);
-
-
+    
+    free(arrDis);
 
     // deve ta errado, mas ta aqui so pra manter no lugar por enquanto.
     /*FILE *fileOutput = fopen(argv[3], "w+"); // argc[1] eh o nome do arquivo de entrada.

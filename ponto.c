@@ -84,6 +84,11 @@ Ponto *retornaPontoDentro(Ponto **pontos, int index)
     return pontos[index];
 }
 
+char* retornaNome(Ponto *ponto)
+{
+    return ponto->nome;
+}
+
 size_t retornaTamanhoPonto()
 {
     return(sizeof(Ponto));

@@ -16,13 +16,14 @@ Ponto *addValor(Ponto *ponto,double valor);
 
 int retornaQtdDimensao(Ponto *ponto);
 
-
 double retornaValorPos(Ponto *ponto, int index);
 
 double *retornaValores(Ponto *ponto);
 
-
 Ponto *retornaPontoDentro(Ponto **pontos, int index);
+
+
+char* retornaNome(Ponto *ponto);
 
 size_t retornaTamanhoPonto();
 

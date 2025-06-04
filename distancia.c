@@ -1,6 +1,12 @@
 #include "distancia.h"
 
-
+// fiz com *p1 em vez de **p1, pra desalocar pode dar ruim? talvez nao pq aloquei
+struct Aresta
+{
+    Ponto *p1;
+    Ponto *p2;
+    double tamanho;  
+};
 
 double distanciaEuclidiana(Ponto* pon1, Ponto* pon2)
 {
@@ -16,17 +22,62 @@ double distanciaEuclidiana(Ponto* pon1, Ponto* pon2)
 }
 
 
-// por enquanto aloca ela toda, ineficiente.
-double **matrixDistancia(Ponto ** pontos, int qtdPontos)
+Aresta *montaArestaSVal(Ponto* pon1, Ponto* pon2)
+{   
+    Aresta *newAresta = malloc(sizeof(Aresta));
+    newAresta->tamanho = distanciaEuclidiana(pon1,pon2);
+    newAresta->p1 = pon1;
+    newAresta->p2 = pon2;
+    
+
+    return newAresta;
+}
+
+Aresta *montaAresta(Ponto* pon1, Ponto* pon2, double distancia)
+{   
+    Aresta *newAresta = malloc(sizeof(Aresta));
+    newAresta->tamanho = distancia;
+    newAresta->p1 = pon1;
+    newAresta->p2 = pon2;
+    
+    return newAresta;
+}
+
+Ponto *retornaP1(Aresta *ar)
+{
+    return ar->p1;
+}
+
+Ponto *retornaP2(Aresta *ar)
+{
+    return ar->p2;
+}
+
+double retornaTamanhoAresta(Aresta *ar)
+{
+    return ar->tamanho;
+}
+
+void liberaAresta(Aresta *arest)
+{
+    if(arest)
+    {
+        free(arest);
+        arest = NULL;
+    }
+}
+
+double *arrayDistancia(Ponto ** pontos, int qtdPontos)
 {
 
     int tamArrAux = (((qtdPontos*qtdPontos)-qtdPontos)/2);
 
-    double **newMatrix = malloc(sizeof(double*) * qtdPontos);
+    double *newArray = malloc(sizeof(double) * tamArrAux);
+    int indArr = 0;
     for(int i=0;i<qtdPontos;i++)
     {
         // estou alocando "desnecessarias" porem vou ver se consigo mudar.
-        newMatrix[i] = malloc(sizeof(double) * (i));
+        // enquanto j<= i?
         for(int j=0;j<qtdPontos;j++)
         {
             // naoz calcula desnecessarias, ou seja, distancias repetidas ou distancia entre o proprio ponto.
@@ -36,33 +87,73 @@ double **matrixDistancia(Ponto ** pontos, int qtdPontos)
             }
             else
             {
-                newMatrix[i][j] = distanciaEuclidiana(pontos[j],pontos[i]);
+                newArray[indArr] = distanciaEuclidiana(pontos[j],pontos[i]);
+                indArr++;
             }
             
             //printf("%.2f ,", newMatrix[i][j]);
         }
     }
-    return newMatrix;
+    return newArray;
 }
 
-void imprimeMatrixDistancia(double ** pontos, int qtdPontos)
+
+void imprimeArrayDistancia(double * pontos, int qtdPontos)
 {
+    int indArr = 0;
     for(int i=0;i<qtdPontos;i++)
     {
-        printf("\n");
+        // estou alocando "desnecessarias" porem vou ver se consigo mudar.
+        // enquanto j<= i?
         for(int j=0;j<qtdPontos;j++)
         {
-            // nao imprime 0 (pq eh distancia do ponto a ele mesmo) nem -1 (que sao numeros repetidos da matriz, que eh espelhada)
-            if(pontos[i][j]>0)
+            // naoz calcula desnecessarias, ou seja, distancias repetidas ou distancia entre o proprio ponto.
+            if(j>=i)
             {
-                 printf("%.2lf, ", pontos[i][j]);
+                break;
             }
             else
             {
-                printf("----, ");
+                printf("%.2f, ", pontos[indArr]);
+                indArr++;
             }
+            
+            //printf("%.2f ,", newMatrix[i][j]);
         }
+        printf("\n");
     }
+}
+
+
+//precisa disso? eh so uma array..
+void liberaArrayDistancia(double *pontos)
+{
+    free(pontos);
+}
+
+//////
+
+void imprimeAresta(Aresta *arestaA)
+{
+    printf("%s, %.2lf  -", retornaNome(arestaA->p1) ,arestaA->tamanho);
+}
+
+int compAresta(const void *a, const void *b)
+{
+    const Aresta *aresta1 = *(const Aresta**) a;
+    const Aresta *aresta2 = *(const Aresta**) b;
+
+
+    return (aresta1->tamanho > aresta2->tamanho) - (aresta1->tamanho < aresta2->tamanho);
+}
+
+//
+//
+//
+
+void ordenaAresta(Aresta **arestas, int qtdArestas)
+{
+    qsort(arestas,qtdArestas,sizeof(Aresta*),compAresta);
 }
 
 int comp(const void *a, const void *b) 
@@ -111,44 +202,4 @@ void matrizToArr(double** matriz, int qtdPontos)
         }
     }
     free(arrAux);
-}
-
-
-
-// ineficiente, sem if j>=i. ademais, ver pq nao deu certo. (provavelmente arrAux tamanho)
-void meusortmatrix(double **arr, int qtdPontos)
-{
-    int tamArrAux = (((qtdPontos*qtdPontos)));
-    double *arrAux = malloc(sizeof(double) * tamArrAux);
-    //flatten
-    for (int i = 0; i < qtdPontos; i++) 
-    {
-        for (int j = 0; j < qtdPontos; j++) 
-        {
-            arrAux[(i*qtdPontos)+(j)] = arr[i][j];
-        }
-    }
-    
-    qsort(arrAux,tamArrAux,sizeof(double),comp);
-
-    //unflatten
-    for (int i = 0; i < qtdPontos; i++) 
-    {
-        for (int j = 0; j < qtdPontos; j++) 
-        {
-            arr[i][j] = arrAux[(i*qtdPontos)+(j)];             
-        }
-    }
-}
-
-
-
-void liberaMatriz(double ** matrix, int qtdPontos)
-{
-    for(int i=0;i<qtdPontos;i++)
-    {
-        free(matrix[i]);
-    }
-    free(matrix);
-    matrix = NULL;
 }
