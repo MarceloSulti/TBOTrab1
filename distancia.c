@@ -1,6 +1,5 @@
 #include "distancia.h"
 
-// fiz com *p1 em vez de **p1, pra desalocar pode dar ruim? talvez nao pq aloquei
 struct Aresta
 {
     Ponto *p1;
@@ -8,6 +7,7 @@ struct Aresta
     double tamanho;  
 };
 
+// funcao que calcula o tamanho da aresta, com base na distancia euclidiana entre dois pontos.
 double distanciaEuclidiana(Ponto* pon1, Ponto* pon2)
 {
     int dimensoes = retornaQtdDimensao(pon1);
@@ -18,10 +18,9 @@ double distanciaEuclidiana(Ponto* pon1, Ponto* pon2)
         sum+= pow(retornaValorPos(pon1, i)-retornaValorPos(pon2,i),2);
     }
     return sqrt(sum);
-    // depois, faz a raiz disso. pra pegar a distancia. (result)
 }
 
-
+// cria uma Aresta e calcula o valor da distancia na hora de criacao.
 Aresta *montaArestaSVal(Ponto* pon1, Ponto* pon2)
 {   
     Aresta *newAresta = malloc(sizeof(Aresta));
@@ -33,6 +32,7 @@ Aresta *montaArestaSVal(Ponto* pon1, Ponto* pon2)
     return newAresta;
 }
 
+// cria uma Aresta ja com distancia calculada.
 Aresta *montaAresta(Ponto* pon1, Ponto* pon2, double distancia)
 {   
     Aresta *newAresta = malloc(sizeof(Aresta));
@@ -43,21 +43,24 @@ Aresta *montaAresta(Ponto* pon1, Ponto* pon2, double distancia)
     return newAresta;
 }
 
+// getter ponto1 da aresta
 Ponto *retornaP1(Aresta *ar)
 {
     return ar->p1;
 }
-
+// getter ponto2 da aresta
 Ponto *retornaP2(Aresta *ar)
 {
     return ar->p2;
 }
 
+// getter tamanho(peso) da aresta.
 double retornaTamanhoAresta(Aresta *ar)
 {
     return ar->tamanho;
 }
-
+// free da aresta (como os pontos dentro sao ponteiros pra pontos ja alocados
+//, nao precisa desalocar, nem foram alocados)
 void liberaAresta(Aresta *arest)
 {
     if(arest)
@@ -67,6 +70,8 @@ void liberaAresta(Aresta *arest)
     }
 }
 
+// constroi uma array de doubles com a distancia de todos os pontos, usado
+// para o tamanho das arestas.
 double *arrayDistancia(Ponto ** pontos, int qtdPontos)
 {
 
@@ -97,14 +102,12 @@ double *arrayDistancia(Ponto ** pontos, int qtdPontos)
     return newArray;
 }
 
-
+// imprime todas as distancias na saida padrao. usada principalmente para debug
 void imprimeArrayDistancia(double * pontos, int qtdPontos)
 {
     int indArr = 0;
     for(int i=0;i<qtdPontos;i++)
     {
-        // estou alocando "desnecessarias" porem vou ver se consigo mudar.
-        // enquanto j<= i?
         for(int j=0;j<qtdPontos;j++)
         {
             // naoz calcula desnecessarias, ou seja, distancias repetidas ou distancia entre o proprio ponto.
@@ -117,8 +120,6 @@ void imprimeArrayDistancia(double * pontos, int qtdPontos)
                 printf("%.2f, ", pontos[indArr]);
                 indArr++;
             }
-            
-            //printf("%.2f ,", newMatrix[i][j]);
         }
         printf("\n");
     }
@@ -131,13 +132,13 @@ void liberaArrayDistancia(double *pontos)
     free(pontos);
 }
 
-//////
-
+// funcao utilizada principalmente pra debug.
 void imprimeAresta(Aresta *arestaA)
 {
     printf("%s, %.2lf  -", retornaNome(arestaA->p1) ,arestaA->tamanho);
 }
 
+// funcao usada para ordenar Arestas no qsort.
 int compAresta(const void *a, const void *b)
 {
     const Aresta *aresta1 = *(const Aresta**) a;
@@ -147,59 +148,14 @@ int compAresta(const void *a, const void *b)
     return (aresta1->tamanho > aresta2->tamanho) - (aresta1->tamanho < aresta2->tamanho);
 }
 
-//
-//
-//
-
+// funcao do qsort que ordena as Arestas.
 void ordenaAresta(Aresta **arestas, int qtdArestas)
 {
     qsort(arestas,qtdArestas,sizeof(Aresta*),compAresta);
 }
 
+// qsort para comparar doubles, para ordenar o array de distancias.
 int comp(const void *a, const void *b) 
 {
     return (*(double*)a >= *(double*)b) ? 1 : -1;
-}
-
-// renomear pra sort matriz ou algo do tipo.
-void matrizToArr(double** matriz, int qtdPontos)
-{
-    // tamanho de uma matriz de distancias sem valores repetidos nem distancia entre os proprios pontos.
-    int tamArrAux = (((qtdPontos*qtdPontos)-qtdPontos)/2);
-    double *arrAux = malloc(sizeof(double) * tamArrAux);
-    //"achata" a matriz em um array.
-    int indArr = 0;
-    for (int i = 0; i < qtdPontos; i++) 
-    {
-        for (int j = 0; j < qtdPontos; j++) 
-        {
-            if(j>=i)
-            {
-                continue;
-            }
-            arrAux[indArr] = matriz[i][j];
-            indArr++;
-        }
-    }
-    //ordena a array que era a matriz.
-    qsort(arrAux,tamArrAux,sizeof(double),comp);
-    for(int i=0;i<tamArrAux;i++)
-    {
-        //printf("%lf, ", arrAux[i]);
-    }
-    //"desachata" o array de volta na matriz, dessa vez ordenado pelo qsort.
-    indArr = 0;
-    for (int i = 0; i < qtdPontos; i++) 
-    {
-        for (int j = 0; j < qtdPontos; j++) 
-        {
-            if(j>=i)
-            {
-                continue;
-            }
-            matriz[i][j] = arrAux[indArr];
-            indArr++;
-        }
-    }
-    free(arrAux);
 }

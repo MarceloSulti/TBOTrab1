@@ -5,7 +5,6 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-// definir struct do ponto e suas funcoes
 typedef struct Ponto Ponto;
 
 Ponto *criaPonto(char *nome, int nDimensoes, double *valores);

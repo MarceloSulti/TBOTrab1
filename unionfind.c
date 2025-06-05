@@ -2,6 +2,10 @@
 
 // precisa de uma struct so pra isso? n da pra usar o metodo normal?
 
+typedef struct {
+	UFSet *parente;
+	int rank;
+} UFSet;
 
 //remover lol
 
@@ -29,7 +33,7 @@ int UF_find(int *id,int i)
     return i;
 }
 
-int UF_find(int *id,int i) 
+/*int UF_find(int *id,int i) 
 {
     while (i != id[i]) 
     {
@@ -37,7 +41,7 @@ int UF_find(int *id,int i)
         i = id[i]; // Buscar o pai ate a raiz.
     }
     return i; // Profundidade de i acessos.
-}
+}*/
 
 
 void UF_union(int p, int q) 

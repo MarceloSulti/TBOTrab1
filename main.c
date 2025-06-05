@@ -6,6 +6,7 @@
 
 #include "ponto.h"
 #include "distancia.h"
+#include "kruskal.h"
 /*
 
 - Em que arquivos vou modularizar? Separar no que as funcionalidades?
@@ -97,6 +98,14 @@ FAZER:
 int main(int argc, char **argv)
 {
 
+
+
+
+
+
+
+
+    printf("\na\n\n");
     if(argc<4) // se nao tiver argumentos < opcional, to botando só pra ficar bonitinho
     {
         return 0;
@@ -198,51 +207,9 @@ int main(int argc, char **argv)
 
     printf("\n");
 
-
-    auxArrAresta = 0;
-    for(int i=0;i<qtdPontos;i++)
-    {
-        // estou alocando "desnecessarias" porem vou ver se consigo mudar.
-        // enquanto j<= i?
-        for(int j=0;j<qtdPontos;j++)
-        {
-            // naoz calcula desnecessarias, ou seja, distancias repetidas ou distancia entre o proprio ponto.
-            if(j>=i)
-            {
-                break;
-            }
-            else
-            {
-                imprimeAresta(arrAresta[auxArrAresta]);
-                auxArrAresta++;
-            }
-        }
-    }
-
+    // ordena as arestas
     ordenaAresta(arrAresta, tamArrAux);
 
-    printf("\nTeste ordenando Arestas\n");
-    auxArrAresta = 0;
-    for(int i=0;i<qtdPontos;i++)
-    {
-        // estou alocando "desnecessarias" porem vou ver se consigo mudar.
-        // enquanto j<= i?
-        for(int j=0;j<qtdPontos;j++)
-        {
-            // naoz calcula desnecessarias, ou seja, distancias repetidas ou distancia entre o proprio ponto.
-            if(j>=i)
-            {
-                break;
-            }
-            else
-            {
-                imprimeAresta(arrAresta[auxArrAresta]);
-                auxArrAresta++;
-            }
-        }
-    }
-
-    
 
     auxArrAresta = 0;
     for(int i=0;i<qtdPontos;i++)
