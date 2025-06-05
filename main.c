@@ -216,10 +216,22 @@ int main(int argc, char **argv)
 
     printf("\nkruskaltest\n");
 
-    algoritmo_kruskal(arrPonto, qtdPontos,
-                             arrAresta, tamArrAux,
-                             &resInt, &resDouble);
 
+    UFSet *ufset = UF_init(qtdPontos);
+    
+    UF_union(ufset, 2,3);
+    UF_union(ufset, 8,5);
+    UF_union(ufset, 9,2);
+    UF_union(ufset, 3,9);
+    UF_union(ufset, 4,6);
+    
+    for(int i=0;i<10;i++)
+    {
+        printf("\n%d," ,UF_find(ufset,i));
+    }
+
+    UF_free(ufset);
+        
     auxArrAresta = 0;
     for(int i=0;i<qtdPontos;i++)
     {
