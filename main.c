@@ -210,6 +210,15 @@ int main(int argc, char **argv)
     // ordena as arestas
     ordenaAresta(arrAresta, tamArrAux);
 
+    int resInt = 0;
+    double resDouble = 0;
+
+
+    printf("\nkruskaltest\n");
+
+    algoritmo_kruskal(arrPonto, qtdPontos,
+                             arrAresta, tamArrAux,
+                             &resInt, &resDouble);
 
     auxArrAresta = 0;
     for(int i=0;i<qtdPontos;i++)
