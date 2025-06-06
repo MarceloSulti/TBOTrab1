@@ -9,7 +9,7 @@ struct UFSet
 };
 
 
-
+// funciona.
 UFSet *UF_init(int size) 
 {
     UFSet *newUF = malloc(sizeof(UFSet));
@@ -39,6 +39,7 @@ void UF_free(UFSet *ufset)
         ufset = NULL;
     }
 }
+// funciona??
 int UF_find(UFSet *ufset,int i) 
 {
     int* id = ufset->id;
@@ -52,6 +53,16 @@ int UF_find(UFSet *ufset,int i)
     return i;
 }
 
+/*
+int UF_find(UFSet *ufset,int i) 
+{
+    int *id = ufset->id;
+    while (i != id[i]) i = id[i]; // Buscar o pai ate a raiz.
+    return i; // Profundidade de i acessos.
+}*/
+
+
+// funciona
 void UF_union(UFSet *ufset,int p, int q) 
 {
     int* id = ufset->id;
@@ -70,20 +81,30 @@ void UF_union(UFSet *ufset,int p, int q)
     }
 }
 
+void printUnion(UFSet *ufset, int qtd)
+{
+    for(int i=0;i<qtd;i++)
+    {
+        printf("elem %d; grupo %d\n", i, ufset->id[i]);
+    }
+}
+
+// funciona
 bool UF_connected(UFSet *ufset,int p, int q) 
 {
-    return UF_find(ufset, p) == UF_find(ufset, q);
+    return (UF_find(ufset, p) == UF_find(ufset, q));
 }
 
 // pega o indice/posicao de um Ponto no ufset, para fazer operacoes dele no UFSet. tem que ser unico.
 // ideia: ja que nome eh unico, compara nome do Ponto que vc quer buscar o index com os pontos iterando.
-int retornaIndexPontoUF(UFSet *ufset, Ponto **pontos, int qtdPontos, char*nome)
+// o ultimo argumento vai ser oq vai ser usado pra achar o ponto
+int retornaIndexPontoUF(UFSet *ufset, Ponto **pontos, int qtdPontos, Ponto* ponto)
 {
     for(int i=0;i<qtdPontos;i++)
     {
-        if(strcmp(retornaNome(pontos[i]), nome))
+        //TODO: se nao funcionar, usar strcmp (menos eficiente?)
+        if(pontos[i] == ponto)
         {
-            printf("Ponto %s encontrado na posicao %d do UFSet\n", nome, i);
             return i;
         }
     }
@@ -92,15 +113,33 @@ int retornaIndexPontoUF(UFSet *ufset, Ponto **pontos, int qtdPontos, char*nome)
     
 }
 
+/*
+    Problemas atuais:
 
+    1- Pegar o index do ponto atual pra modificar/checar na struct UF.
+     < possivel solucao: comparar ponteiros
+    
+
+
+    - Minimum-Spanning-Forest em vez de MST (Retornar/Imprimir TODOS os grupos, 
+    nao so um conectado)
+
+
+*/
 void algoritmo_kruskal(Ponto **pontos, int qtdPontos,
                              Aresta **arestas_ordenadas, int qtdArestas,
-                             int *tamanho_mst_resultado, double *custo_total_mst)
+                             int *tamanho_mst_resultado, double *custo_total_mst, 
+                             int k)
 {
                                 // adicionar k de alguma forma pra tamanho max
     // ver como obter uma floresta em vez de uma arvore (desconexos com base em k)
 
-    
+
+    // variavel que fala qnts arestas foram adicionadas na mst
+    int arestas_adicionadasMST = 0;     
+    // maximo de arestas que podem ter na MST com base em K de argv[2].
+    int maxArestasMST = (qtdPontos - (k)); 
+    // variaveis de retorno, posso remover.
     *tamanho_mst_resultado = 0;
     *custo_total_mst = 0.0;
 
@@ -108,19 +147,53 @@ void algoritmo_kruskal(Ponto **pontos, int qtdPontos,
     UFSet *ufset = UF_init(qtdPontos);
 
 
-    int arestas_adicionadas = 0;
-    double custo_acumulado = 0.0;
+    double tamanhoTotalMST = 0.0;
 
     // Iterate through all sorted edges
-    for (int i = 0; i < qtdArestas; i++) {
+    for (int i = 0; i < qtdArestas; i++) 
+    {
         Aresta *aresta_atual = arestas_ordenadas[i];
-    
+        
+        int indexP1 = retornaIndexPontoUF(ufset, pontos, qtdPontos, retornaP1(aresta_atual));
+        int indexP2 = retornaIndexPontoUF(ufset, pontos, qtdPontos, retornaP2(aresta_atual));
+        //printf("id1: %d (%s) id2: %d (%s)\n", indexP1, retornaNome(retornaP1(aresta_atual)), indexP2, retornaNome(retornaP2(aresta_atual)));
+
         // pega
         // pega p1 e p2 da Aresta (seu index no UFSet?)
         //int p1 = retornaIndexPontoUF(ufset, pontos, qtdPontos,);
 
         
+        if(!UF_connected(ufset,indexP1,indexP2))
+        {
+            if(arestas_adicionadasMST < maxArestasMST)
+            {
+                UF_union(ufset, indexP1,indexP2);
+                tamanhoTotalMST+= retornaTamanhoAresta(aresta_atual);
+                // adiciona na MST e etc.
+                //TODO: adiciona a aresta na estrutura do kruskal? 
+                // ou em algum lugar
+                arestas_adicionadasMST++;
+            }
+            else
+            {
+                // acabou a MST, fazer funcoes pra finalizar.
+                break;
+            }
+        }
+        if(arestas_adicionadasMST >= maxArestasMST)
+        {
+            
+            // acabou a MST, fazer as funcoes acima pra finalizar.
+            //talvez seja desnecessario? 
+            
+        }
+
         /*
+
+            Pega posicao/index do p1 e do p2 na array **Pontos, e usa a index
+            pra operacoes do union find.
+
+
             Check if p1 and p2 are already connected (in the same set)
 
             (union find vai ter os pontos (indices???), MST vai ter Arestas (ordenadas, para qnd da a qtd pedida))
@@ -128,7 +201,7 @@ void algoritmo_kruskal(Ponto **pontos, int qtdPontos,
         
     
         se nao eh do msm conjunto: 
-
+        
 
     
         // se nao eh do mesmo conjunto
@@ -137,7 +210,7 @@ void algoritmo_kruskal(Ponto **pontos, int qtdPontos,
         if(arestas_adicionadasMST < maximo_arestas) < se ainda tiver espaco.
             union (p1,p2) < une os pontos no UF. 
             mst_arestas[arestas_adicionadas] = aresta_atual; // adiciona aresta na MST.
-            custo_acumulado += retornaTamanhoAresta(aresta_atual);
+            tamanhoTotalMST += retornaTamanhoAresta(aresta_atual);
             arestas_adicionadas++;
         
         
@@ -149,10 +222,11 @@ void algoritmo_kruskal(Ponto **pontos, int qtdPontos,
 
     }
 
-    *tamanho_mst_resultado = arestas_adicionadas;
-    *custo_total_mst = custo_acumulado;
+    //printUnion(ufset,qtdPontos);
+    *tamanho_mst_resultado = arestas_adicionadasMST;
+    *custo_total_mst = tamanhoTotalMST;
     
-    
+    UF_free(ufset);
 
     return;
 }

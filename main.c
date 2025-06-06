@@ -118,7 +118,7 @@ int main(int argc, char **argv)
         return 1;
     }
     //usar size_t? < sim, getline pede.
-
+    int k = atoi(argv[2]);
 
     int kGrupos = atoi(argv[2]);
     // por enquanto aonde armazeno todos pontos.
@@ -219,16 +219,12 @@ int main(int argc, char **argv)
 
     UFSet *ufset = UF_init(qtdPontos);
     
-    UF_union(ufset, 2,3);
-    UF_union(ufset, 8,5);
-    UF_union(ufset, 9,2);
-    UF_union(ufset, 3,9);
-    UF_union(ufset, 4,6);
+    double resultDouble = 0;
+    int resultInt = 0;
     
-    for(int i=0;i<10;i++)
-    {
-        printf("\n%d," ,UF_find(ufset,i));
-    }
+    algoritmo_kruskal(arrPonto, qtdPontos, arrAresta, tamArrAux, &resultInt,
+    &resultDouble, k);
+
 
     UF_free(ufset);
         
