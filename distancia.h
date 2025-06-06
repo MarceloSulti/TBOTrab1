@@ -26,6 +26,8 @@ void imprimeAresta(Aresta *arestaA);
 
 void liberaAresta(Aresta *arest);
 
+void liberaArestas(Aresta **arrArestas, int qtdArestas);
+
 double distanciaEuclidiana(Ponto* pon1, Ponto* pon2);
 
 double *arrayDistancia(Ponto ** pontos, int qtdPontos);

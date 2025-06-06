@@ -4,12 +4,10 @@ struct UFSet
 {
     int *id;
     int *sz;
-    
-    int qtdNodes; // quantidade de elementos no UF
 };
 
 
-// funciona.
+// Inicializa a struct UFSet com tamanho "size".
 UFSet *UF_init(int size) 
 {
     UFSet *newUF = malloc(sizeof(UFSet));
@@ -20,15 +18,13 @@ UFSet *UF_init(int size)
     for (int i = 0; i < size; i++) 
     {
         id[i] = i; // Cada objeto comeca na sua propria componente.
-        sz[i] = 0;
-
-    } // N acessos ao array.]
-    newUF->qtdNodes = 0;
+        sz[i] = 0; // comecam com tamanho 0
+    } 
 
     return newUF;
 }
 
-
+// Libera a struct UFSet.
 void UF_free(UFSet *ufset)
 {
     if(ufset)
@@ -39,7 +35,7 @@ void UF_free(UFSet *ufset)
         ufset = NULL;
     }
 }
-// funciona??
+
 int UF_find(UFSet *ufset,int i) 
 {
     int* id = ufset->id;
@@ -52,14 +48,6 @@ int UF_find(UFSet *ufset,int i)
     }
     return i;
 }
-
-/*
-int UF_find(UFSet *ufset,int i) 
-{
-    int *id = ufset->id;
-    while (i != id[i]) i = id[i]; // Buscar o pai ate a raiz.
-    return i; // Profundidade de i acessos.
-}*/
 
 
 // funciona
@@ -146,10 +134,10 @@ void algoritmo_kruskal(Ponto **pontos, int qtdPontos,
     // inicia o set union-find
     UFSet *ufset = UF_init(qtdPontos);
 
-
+    // Array com as arestas dentro da MST (ja alocadas com o tamanho necessario).
+    Aresta **arestasMST = malloc(sizeof(Aresta*) * maxArestasMST);
     double tamanhoTotalMST = 0.0;
 
-    // Iterate through all sorted edges
     for (int i = 0; i < qtdArestas; i++) 
     {
         Aresta *aresta_atual = arestas_ordenadas[i];
@@ -158,10 +146,6 @@ void algoritmo_kruskal(Ponto **pontos, int qtdPontos,
         int indexP2 = retornaIndexPontoUF(ufset, pontos, qtdPontos, retornaP2(aresta_atual));
         //printf("id1: %d (%s) id2: %d (%s)\n", indexP1, retornaNome(retornaP1(aresta_atual)), indexP2, retornaNome(retornaP2(aresta_atual)));
 
-        // pega
-        // pega p1 e p2 da Aresta (seu index no UFSet?)
-        //int p1 = retornaIndexPontoUF(ufset, pontos, qtdPontos,);
-
         
         if(!UF_connected(ufset,indexP1,indexP2))
         {
@@ -169,6 +153,7 @@ void algoritmo_kruskal(Ponto **pontos, int qtdPontos,
             {
                 UF_union(ufset, indexP1,indexP2);
                 tamanhoTotalMST+= retornaTamanhoAresta(aresta_atual);
+                arestasMST[arestas_adicionadasMST] = aresta_atual;
                 // adiciona na MST e etc.
                 //TODO: adiciona a aresta na estrutura do kruskal? 
                 // ou em algum lugar
@@ -179,13 +164,6 @@ void algoritmo_kruskal(Ponto **pontos, int qtdPontos,
                 // acabou a MST, fazer funcoes pra finalizar.
                 break;
             }
-        }
-        if(arestas_adicionadasMST >= maxArestasMST)
-        {
-            
-            // acabou a MST, fazer as funcoes acima pra finalizar.
-            //talvez seja desnecessario? 
-            
         }
 
         /*
@@ -221,12 +199,15 @@ void algoritmo_kruskal(Ponto **pontos, int qtdPontos,
         */
 
     }
+    // funcao pra retornar grupo de cada uma?
 
     //printUnion(ufset,qtdPontos);
     *tamanho_mst_resultado = arestas_adicionadasMST;
     *custo_total_mst = tamanhoTotalMST;
     
     UF_free(ufset);
+    // se for usar pra fora ver se faco isso
+    free(arestasMST);
 
     return;
 }

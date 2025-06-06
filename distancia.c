@@ -70,6 +70,19 @@ void liberaAresta(Aresta *arest)
     }
 }
 
+void liberaArestas(Aresta **arrArestas, int qtdArestas)
+{
+    if(arrArestas)
+    {
+        for(int i=0;i<qtdArestas;i++)
+        {
+            liberaAresta(arrArestas[i]);
+        }
+        free(arrArestas);
+        arrArestas = NULL;
+    }
+}
+
 // constroi uma array de doubles com a distancia de todos os pontos, usado
 // para o tamanho das arestas.
 double *arrayDistancia(Ponto ** pontos, int qtdPontos)

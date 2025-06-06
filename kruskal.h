@@ -8,9 +8,6 @@
 #include "ponto.h"     
 #include "distancia.h" 
 
-
-#include "kruskal.h"
-
 typedef struct UFSet UFSet;
 
 UFSet *UF_init(int size);
